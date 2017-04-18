@@ -20,9 +20,11 @@ module.exports = function rundownPDFParser (absoluteFilePath) {
           }
 
           if (iterator) {
-            if (v.x > 3.1 && v.x < 6.7) titles[iterator].format.push(string)
-            if (v.x > 6.7 && v.x < 25.8) titles[iterator].text.push(string)
-            if (v.x > 25.8) titles[iterator].time.push(string)
+            if (v.y < 35.6 && v.y > 3.3) {
+              if (v.x > 3.1 && v.x < 6.7) titles[iterator].format.push(string)
+              if (v.x > 6.7 && v.x < 25.8) titles[iterator].text.push(string)
+              if (v.x > 25.8) titles[iterator].time.push(string)
+            }
           }
         })
       })
