@@ -1,3 +1,5 @@
+#!/usr/local/bin/node
+
 const process = require('process')
 const path = require('path')
 const fs = require('fs')
@@ -18,4 +20,4 @@ rundownPDFParser(pdfFilePath)
 })
 
 // NOTE: batch processing
-// ls | xargs -I {} node ../../src/cli ./{} ../data
+// ls | xargs -I {} cld2data /input/folder /output/folder

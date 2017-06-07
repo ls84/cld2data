@@ -1,11 +1,14 @@
 {
-  "name": "rundown2json",
+  "name": "cld2data",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "cld2data": "src/cli.js"
+   },
   "scripts": {
     "test": "mocha --inspect --watch ./test/index.js",
-    "debug": "mocha --inspect --debug-brk --watch ./test/index.js"
+    "debug": "mocha --inspect=0.0.0.0:9229 --debug-brk --watch ./test/index.js"
   },
   "author": "Liu Shuo",
   "license": "ISC",
