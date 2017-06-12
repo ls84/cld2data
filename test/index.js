@@ -9,7 +9,6 @@ var options = {
 let path = [
   'src/rundownPDFParser.js'
 ]
-// lint(path, options)
 lint(path, {formatter: 'compact'})
 
 const assert = require('assert')
@@ -46,7 +45,9 @@ describe('rundownPDFParser', () => {
       }
     })
     it('should add meta information', () => {
-      assert.equal(output.meta, 16)
+      assert.equal(output.meta.count, 16)
+      assert.equal(output.meta.program, 'CCTV-NEWS CGTN Evening News 00:00 The World Today')
+      assert.equal(output.meta.date, '2017-05-17 00:00:00')
     })
   })
 })
