@@ -22,25 +22,31 @@ describe('rundownPDFParser', () => {
     before(() => {
       let absoluteFilePath = path.resolve(__dirname, './cld/basis.pdf')
       return rundownPDFParser(path.resolve(absoluteFilePath))
-      .then((output) => {
-        output = output
+      .then((result) => {
+        output = result
       })
       .catch((error) => {
         throw new Error(error)
       })
     })
-
     it('should parse out 3 fields', () => {
       for (let key in output) {
-        assert(output[key].format)
-        assert(output[key].text)
-        assert(output[key].time)
+        if (key !== 'meta') {
+          assert(output[key].format)
+          assert(output[key].text)
+          assert(output[key].time)
+        }
       }
     })
     it('should parse time to a 5 element array', () => {
       for (let key in output) {
-        assert.equal(output[key].time.length, 5)
+        if (key !== 'meta') {
+          assert.equal(output[key].time.length, 5)
+        }
       }
+    })
+    it('should add meta information', () => {
+      assert.equal(output.meta, 16)
     })
   })
 })

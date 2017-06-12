@@ -5,7 +5,7 @@ module.exports = function rundownPDFParser (absoluteFilePath) {
   return new Promise(function (resolve, reject) {
     pdfParser.on('pdfParser_dataError', errData => { reject(errData) })
     pdfParser.on('pdfParser_dataReady', pdfData => {
-      let titles = {}
+      let titles = {meta: 0}
       let iterator = 0
 
       let pages = pdfData.formImage.Pages
@@ -17,6 +17,7 @@ module.exports = function rundownPDFParser (absoluteFilePath) {
           if (/^\d{1,2}$/.test(string) && v.x < 6.7) {
             iterator = parseInt(string)
             titles[iterator] = {format: [], text: [], time: []}
+            titles.meta ++
           }
 
           if (iterator) {
