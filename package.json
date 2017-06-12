@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": {
     "cld2data": "src/cli.js"
-   },
+  },
   "scripts": {
     "test": "mocha --inspect --watch ./test/index.js",
     "debug": "mocha --inspect=0.0.0.0:9229 --debug-brk --watch ./test/index.js"
@@ -23,6 +23,7 @@
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "mocha-eslint": "^3.0.1"
   }
 }
