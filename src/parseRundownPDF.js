@@ -1,7 +1,7 @@
 let PDFParser = require('pdf2json')
 let pdfParser = new PDFParser()
 
-module.exports = function rundownPDFParser (absoluteFilePath) {
+module.exports = function rundownPDFParse (absoluteFilePath) {
   return new Promise(function (resolve, reject) {
     pdfParser.on('pdfParser_dataError', errData => { reject(errData) })
     pdfParser.on('pdfParser_dataReady', pdfData => {

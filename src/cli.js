@@ -3,23 +3,27 @@
 const process = require('process')
 const path = require('path')
 const fs = require('fs')
-const rundownPDFParser = require('./rundownPDFParser.js')
+const parseRundownPDF = require('./parseRundownPDF.js')
+const cleanRundownWithDuration = require('./cleanRundownWithDuration.js')
 let argv = require('minimist')(process.argv.slice(2))
-let pdfFilePath = path.resolve(process.cwd(), argv._[0])
-let writeFolderPath = path.resolve(process.cwd(), argv._[1])
-let writeFilePath = `${writeFolderPath}/${pdfFilePath.split('/').pop().split('.')[0]}.json`
+let procedure = argv._[0]
 
-//TODO: windows file path uses \ instead, regex will not match
-let datetime = /(\d\d)\/(\d\d\d\d)\.pdf/.exec(pdfFilePath)
-process.stdout.write(`${datetime[1]},${datetime[2]}`)
-rundownPDFParser(pdfFilePath)
-.then((json) => {
-  fs.writeFileSync(writeFilePath, JSON.stringify(json, null, 2))
-  console.log(`,${json.meta},done`)
-})
-.catch((error) => {
-  console.log(error)
-})
+switch (procedure) {
+  case 'parseRundownPDF':
+    let pdfFilePath = path.resolve(process.cwd(), argv._[1])
+    parseRundownPDF(pdfFilePath)
+    .then((json) => {
+      process.stdout.write(JSON.stringify(json, null, 2))
+    })
+    .catch((error) => {
+      throw new Error(`error on parsing ${pdfFilePath}`)
+    })
+    break
+  case 'cleanRundownWithDuration':
+    let jsonFilePath = path.resolve(process.cwd(), argv._[1])
+    let cleanedJSON = cleanRundownWithDuration(jsonFilePath)
+    process.stdout.write(JSON.stringify(cleanedJSON, null, 2))
+}
 
-// NOTE: batch processing
-// ls | xargs -I {} cld2data {} /output/folder
+// NOTE: xargs must be stopped on throw
+// xargs -I {} sh -c 'cld2data procedure {} $0 || exit 255'
