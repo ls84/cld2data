@@ -11,11 +11,18 @@ module.exports = function cleanRundownWithDuration (absoluteFilePath) {
   let cleanedJSON = {
     meta: json.meta
   }
-
+  let signoffFlag = false
+  let signoffKeywords = [/SIGN OFF/]
   for (let key in json) {
     if (key !== 'meta') {
       let duration = json[key].time[3]
-      if (!/00:00:00/.test(duration)) {
+
+      if (signoffKeywords.some((v) => v.test(json[key].text.join()))) {
+        if (signoffFlag) throw new Error(`file: ${fileName} index: ${key} has duplicated SIGN OFF keywords`)
+        signoffFlag = true
+      }
+
+      if (!/00:00:00/.test(duration) && !signoffFlag) {
         let time = /(\d\d):(\d\d):(\d\d)/.exec(duration)
         if (parseInt(time[1]) > 0) throw new Error(`file: ${fileName} index: ${key} - should not have passed one hour`)
         let startTime = new Date(timestamp)
@@ -23,7 +30,7 @@ module.exports = function cleanRundownWithDuration (absoluteFilePath) {
         timestamp += durationInMilliseconds
         let endTime = new Date(timestamp)
 
-        if (durationInMilliseconds > 600000) {
+        if (durationInMilliseconds > 600000 && !json[key].exception) {
           throw new Error(`file: ${fileName} index: ${key} - duration exceeds 10 mins`)
         }
 
@@ -37,6 +44,8 @@ module.exports = function cleanRundownWithDuration (absoluteFilePath) {
       }
     }
   }
+
+  if (!signoffFlag) throw new Error(`file: ${fileName} did not detect SIGN OFF keyword`)
 
   return cleanedJSON
 }
