@@ -19,7 +19,7 @@ module.exports = function rundownPDFParse (absoluteFilePath) {
         texts.forEach((v) => {
           let string = decodeURIComponent(v.R[0].T)
           let program = /^(\d\d\d\d-\d\d-\d\d\s\d\d:\d\d:\d\d)(.*)$/.exec(string)
-          if (program && v.x < 11.42 && v.x > 11.40) {
+          if (program && v.y > 0.53 && v.y < 0.54) {
             titles.meta.program = program[2].trim().replace('[', '').replace(']', '')
             titles.meta.date = program[1]
           }
@@ -38,6 +38,10 @@ module.exports = function rundownPDFParse (absoluteFilePath) {
           }
         })
       })
+      if (!titles.meta.program) throw new Error(`did not parse 'program' on ${absoluteFilePath}`)
+      if (!titles.meta.date) throw new Error(`did not parse 'date' on ${absoluteFilePath}`)
+      if (!titles.meta.count) throw new Error(`did not iterate 'count' on ${absoluteFilePath}`)
+
       resolve(titles)
     })
     pdfParser.loadPDF(absoluteFilePath)

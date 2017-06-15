@@ -7,20 +7,20 @@ var options = {
   strict: true
 }
 let path = [
-  'src/rundownPDFParser.js'
+  'src/parseRundownPDF.js'
 ]
 lint(path, {formatter: 'compact'})
 
 const assert = require('assert')
-describe('rundownPDFParser', () => {
-  const rundownPDFParser = require('../src/rundownPDFParser.js')
+describe('parseRundownPDF', () => {
+  const parseRundownPDF = require('../src/parseRundownPDF.js')
   const path = require('path')
   describe('basic information', () => {
     let output
 
     before(() => {
       let absoluteFilePath = path.resolve(__dirname, './cld/basis.pdf')
-      return rundownPDFParser(path.resolve(absoluteFilePath))
+      return parseRundownPDF(path.resolve(absoluteFilePath))
       .then((result) => {
         output = result
       })

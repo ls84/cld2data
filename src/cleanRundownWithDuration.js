@@ -8,7 +8,9 @@ module.exports = function cleanRundownWithDuration (absoluteFilePath) {
   let minute = datetime[2]
   let timestamp = new Date(2017, 5, 17, parseInt(hour), parseInt(minute)).getTime()
   
-  let cleanedJSON = {}
+  let cleanedJSON = {
+    meta: json.meta
+  }
 
   for (let key in json) {
     if (key !== 'meta') {
