@@ -23,7 +23,7 @@ switch (procedure) {
     break
   case 'cleanCombinedJSON':
     let jsonFilePath = path.resolve(process.cwd(), argv._[1])
-    let cleanedJSON = cleanRundownWithDuration(jsonFilePath)
+    let cleanedJSON = cleanCombinedJSON(jsonFilePath)
     if (argv.f === 'tsv') {   
       let tsv = ['fileName', 'program', 'index', 'format', 'title', 'editor', 'reporter', 'keywords', 'content', 'startTime', 'endTime', 'duration'].join('\t') + '\n'
       for (let key in cleanedJSON) {
@@ -38,7 +38,7 @@ switch (procedure) {
             row.editor,
             row.reporter,
             row.keywords,
-            row.content,
+            JSON.stringify(row.content),
             row.startTime.toISOString(),
             row.endTime.toISOString(),
             row.duration / 1000
@@ -51,32 +51,37 @@ switch (procedure) {
     }
     process.stdout.write(JSON.stringify(cleanedJSON, null, 2))
     break
-    case 'attachScriptContent':
-      let rundownPDFPath = path.resolve(process.cwd(), argv._[1])
-      let cldFolder = path.dirname(rundownPDFPath)
-      parseRundownPDF(rundownPDFPath)
-      .then((json) => {
-        let date = new Date(json.meta.date)
-        let hourString = '0' + date.getHours()
-        let minuteString = '0' + date.getMinutes()
-        let fileName = hourString.substr(-2) + minuteString.substr(-2)
-        let scriptContent = parseScript(cldFolder +  '/' + fileName + '.txt')
-        for (let key in json) {
-          if (key !== 'meta') {
-            let script = scriptContent.filter((v) => key === v.order.toString())[0]
-            json[key].editor = script.editor
-            json[key].reporter = script.reporter
-            json[key].keywords = script.keywords
-            json[key].content = script.content
-          }
+  case 'parseScript':
+    let txtFilePath = path.resolve(process.cwd(), argv._[1])
+    let content = parseScript(txtFilePath)
+    console.log(content)
+    break
+  case 'attachScriptContent':
+    let rundownPDFPath = path.resolve(process.cwd(), argv._[1])
+    let cldFolder = path.dirname(rundownPDFPath)
+    parseRundownPDF(rundownPDFPath)
+    .then((json) => {
+      let date = new Date(json.meta.date)
+      let hourString = '0' + date.getHours()
+      let minuteString = '0' + date.getMinutes()
+      let fileName = hourString.substr(-2) + minuteString.substr(-2)
+      let scriptContent = parseScript(cldFolder +  '/' + fileName + '.txt')
+      for (let key in json) {
+        if (key !== 'meta') {
+          let script = scriptContent.filter((v) => key === v.order.toString())[0]
+          json[key].editor = script.editor
+          json[key].reporter = script.reporter
+          json[key].keywords = script.keywords
+          json[key].content = script.content
         }
-        process.stdout.write(JSON.stringify(json, null, 2))
-      })
-      .catch((error) => {
-        console.log(error)
-        throw new Error(`error on parsing ${pdfFilePath}`)
-      })
-      break
+      }
+      process.stdout.write(JSON.stringify(json, null, 2))
+    })
+    .catch((error) => {
+      console.log(error)
+      throw new Error(`error on parsing ${pdfFilePath}`)
+    })
+    break
 }
 
 // NOTE: xargs must be stopped on throw

@@ -6,15 +6,35 @@ function parseContent(story) {
   var r = {};
 
   var split = story.split("\r\n");
-  //console.log(split);
   r.format = split[0].match(/\[\d\d\d\]\[播出方式\](.{0,})/)[1];
   r.title = split[1].match(/\[标题\](.{0,})/)[1];
   r.keywords = split[2].match(/\[关键字\](.{0,})/)[1];
   r.editor = split[3].match(/\[视频编辑\](.{0,})/)[1];
   r.reporter = split[4].match(/\[记者\](.{0,})/)[1];
-  r.content = split.slice(5,-1).reduce(function(p,c){
-    return p + "\r\n" + c
+  
+  let tagFlag = 'text'
+  let parsedContent = {
+    text: []
+  }
+  let tagstart
+  split.forEach((v, i) => {
+    if (i > 5) {
+      tagstart = /【(.{1,})】/.exec(v)
+      if (tagstart) {
+        tagFlag = tagstart[1]
+        parsedContent[tagFlag] = []
+      }
+      parsedContent[tagFlag].push(v)
+      tagstart = null
+    }
   })
+  for (let key in parsedContent) {
+    parsedContent[key] = parsedContent[key].filter((v) => v.trim() !== '')
+    if (key !== 'text') {
+      parsedContent[key].splice(0, 1)
+    }
+  }
+  r.content = parsedContent
 
   return r
 
@@ -41,7 +61,6 @@ function separateStory(raw) {
 var parseScript = function (absoluteFilePath) {
   
   let raw = fs.readFileSync(absoluteFilePath, {encoding:'utf8'})
-  // console.log(raw) 
   var story = separateStory(raw)
 
   return story.map(function(v,i,a){
