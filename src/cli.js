@@ -4,7 +4,7 @@ const process = require('process')
 const path = require('path')
 const fs = require('fs')
 const parseRundownPDF = require('./parseRundownPDF.js')
-const cleanRundownWithDuration = require('./cleanRundownWithDuration.js')
+const cleanCombinedJSON = require('./cleanCombinedJSON.js')
 const parseScript = require('./parseScript.js')
 let argv = require('minimist')(process.argv.slice(2))
 let procedure = argv._[0]
@@ -21,11 +21,11 @@ switch (procedure) {
       throw new Error(`error on parsing ${pdfFilePath}`)
     })
     break
-  case 'cleanRundownWithDuration':
+  case 'cleanCombinedJSON':
     let jsonFilePath = path.resolve(process.cwd(), argv._[1])
     let cleanedJSON = cleanRundownWithDuration(jsonFilePath)
     if (argv.f === 'tsv') {   
-      let tsv = ['fileName', 'program', 'index', 'format', 'text', 'startTime', 'endTime', 'duration'].join('\t') + '\n'
+      let tsv = ['fileName', 'program', 'index', 'format', 'title', 'editor', 'reporter', 'keywords', 'content', 'startTime', 'endTime', 'duration'].join('\t') + '\n'
       for (let key in cleanedJSON) {
         if (key !== 'meta') {
           let row = cleanedJSON[key]
@@ -35,6 +35,10 @@ switch (procedure) {
             key,
             row.format.join(),
             row.text.join(),
+            row.editor,
+            row.reporter,
+            row.keywords,
+            row.content,
             row.startTime.toISOString(),
             row.endTime.toISOString(),
             row.duration / 1000

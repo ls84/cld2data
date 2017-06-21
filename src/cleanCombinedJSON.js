@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-module.exports = function cleanRundownWithDuration (absoluteFilePath) {
+module.exports = function cleanCombinedJSON (absoluteFilePath) {
   let fileName = path.basename(absoluteFilePath)
   let json = JSON.parse(fs.readFileSync(absoluteFilePath, {encoding:'utf8'}))
   let datetime = /(\d\d)(\d\d)/.exec(fileName)
