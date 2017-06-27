@@ -9,6 +9,8 @@ const parseScript = require('./parseScript.js')
 let argv = require('minimist')(process.argv.slice(2))
 let procedure = argv._[0]
 
+function padTime (number) {
+}
 switch (procedure) {
   
   case 'parseRundownPDF':
@@ -42,6 +44,28 @@ switch (procedure) {
             row.startTime.toISOString(),
             row.endTime.toISOString(),
             row.duration / 1000
+          ]
+          tsv += data.join('\t')
+          tsv += '\n'
+        }
+      }
+      return process.stdout.write(tsv)
+    }
+
+    if (argv.f === 'excel') {
+      let tsv = ''
+      for (let key in cleanedJSON) {
+        if (key !== 'meta') {
+          let row = cleanedJSON[key]
+          let title = row.content.Topic2line ? row.content.Topic2line.join() : row.text.join()
+          console.log(`------${key}------`)
+          console.log(row.content)
+          console.log(title)
+          let data = [
+            key,
+            ('0' + row.startTime.getMinutes()).substr(-2),
+            ('0' + row.endTime.getSeconds()).substr(-2),
+            title 
           ]
           tsv += data.join('\t')
           tsv += '\n'

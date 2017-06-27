@@ -9,7 +9,7 @@ module.exports = function cleanCombinedJSON (absoluteFilePath) {
     meta: json.meta
   }
   let signoffFlag = false
-  let signoffKeywords = [/SIGN OFF/]
+  let signoffKeywords = [/SIGN OFF/, /SIGNOFF/]
   for (let key in json) {
     if (key !== 'meta') {
       let duration = json[key].time[3]
