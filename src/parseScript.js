@@ -1,7 +1,9 @@
 var assert = require("assert");
 var fs = require("fs");
+let counter = 1
 
 function parseContent(story) {
+  // console.log(`------${counter ++}------`)
 
   var r = {};
 
@@ -14,24 +16,30 @@ function parseContent(story) {
   
   let tagFlag = 'text'
   let parsedContent = {
-    text: []
+    text: [[]]
   }
   let tagstart
   split.forEach((v, i) => {
-    if (i > 5) {
+    if (i > 4) {
       tagstart = /【(.{1,})】/.exec(v)
       if (tagstart) {
         tagFlag = tagstart[1]
-        parsedContent[tagFlag] = []
+        if (!parsedContent[tagFlag]) parsedContent[tagFlag] = []
+        parsedContent[tagFlag].push([])
       }
-      parsedContent[tagFlag].push(v)
+      let currentTagCount = parsedContent[tagFlag].length
+      parsedContent[tagFlag][currentTagCount - 1].push(v)
       tagstart = null
     }
   })
   for (let key in parsedContent) {
-    parsedContent[key] = parsedContent[key].filter((v) => v.trim() !== '')
+    parsedContent[key].forEach((v, i, a) => {
+      a[i] = v.filter((v) => v.trim() !== '')
+    })
     if (key !== 'text') {
-      parsedContent[key].splice(0, 1)
+      parsedContent[key].forEach((v, i, a) => {
+        v.splice(0, 1)
+      })
     }
   }
   r.content = parsedContent

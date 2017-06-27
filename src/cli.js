@@ -57,10 +57,7 @@ switch (procedure) {
       for (let key in cleanedJSON) {
         if (key !== 'meta') {
           let row = cleanedJSON[key]
-          let title = row.content.Topic2line ? row.content.Topic2line.join() : row.text.join()
-          console.log(`------${key}------`)
-          console.log(row.content)
-          console.log(title)
+          let title = row.content.Topic2line ? row.content.Topic2line[0].join() : row.text.join()
           let data = [
             key,
             ('0' + row.startTime.getMinutes()).substr(-2),
