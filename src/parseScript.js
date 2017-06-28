@@ -14,6 +14,7 @@ function parseContent(story) {
   r.editor = split[3].match(/\[视频编辑\](.{0,})/)[1];
   r.reporter = split[4].match(/\[记者\](.{0,})/)[1];
   
+  let raw = []
   let tagFlag = 'text'
   let parsedContent = {
     text: [[]]
@@ -21,6 +22,7 @@ function parseContent(story) {
   let tagstart
   split.forEach((v, i) => {
     if (i > 4) {
+      raw.push(v)
       tagstart = /【(.{1,})】/.exec(v)
       if (tagstart) {
         tagFlag = tagstart[1]
@@ -42,6 +44,7 @@ function parseContent(story) {
       })
     }
   }
+  r.raw = raw.filter((v) => v.trim() !== '')
   r.content = parsedContent
 
   return r

@@ -37,6 +37,7 @@ module.exports = function cleanCombinedJSON (absoluteFilePath) {
         cleanedJSON[key]['editor'] = json[key].editor
         cleanedJSON[key]['reporter'] = json[key].reporter
         cleanedJSON[key]['keywords'] = json[key].keywords
+        cleanedJSON[key]['raw'] = json[key].raw
         cleanedJSON[key]['content'] = json[key].content
         cleanedJSON[key]['time'] = json[key].time
         cleanedJSON[key]['startTime'] = startTime

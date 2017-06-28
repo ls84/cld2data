@@ -58,12 +58,30 @@ switch (procedure) {
         if (key !== 'meta') {
           let row = cleanedJSON[key]
           let title = row.content.Topic2line ? row.content.Topic2line[0].join() : row.text.join()
+          let startTime = ('0' + row.startTime.getMinutes()).substr(-2) + ('0' + row.startTime.getSeconds()).substr(-2)
+          let endTime = ('0' + row.endTime.getMinutes()).substr(-2) + ('0' + row.endTime.getSeconds()).substr(-2)
           let data = [
             key,
-            ('0' + row.startTime.getMinutes()).substr(-2),
-            ('0' + row.endTime.getSeconds()).substr(-2),
-            title 
+            startTime,
+            endTime,
+            title,
+            '',
+            row.raw.join('\\n'),
+            row.format
           ]
+          for (let i = 0; i < 16; i ++) {
+            data.push('')
+          }
+          let datetime = new Date(cleanedJSON.meta.date)
+          let year = datetime.getFullYear()
+          let month = datetime.getMonth()
+          let date = datetime.getDate()
+          let hours = datetime.getHours()
+          data.push(year)
+          data.push(('0' + month).substr(-2))
+          data.push(('0' + date).substr(-2))
+          data.push(('0' + hours).substr(-2))
+          console.log(cleanedJSON.meta)
           tsv += data.join('\t')
           tsv += '\n'
         }
@@ -94,6 +112,7 @@ switch (procedure) {
           json[key].reporter = script.reporter
           json[key].keywords = script.keywords
           json[key].content = script.content
+          json[key].raw = script.raw
         }
       }
       process.stdout.write(JSON.stringify(json, null, 2))
