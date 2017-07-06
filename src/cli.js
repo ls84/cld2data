@@ -78,10 +78,9 @@ switch (procedure) {
           let date = datetime.getDate()
           let hours = datetime.getHours()
           data.push(year)
-          data.push(('0' + month).substr(-2))
+          data.push(('0' + (month + 1)).substr(-2))
           data.push(('0' + date).substr(-2))
           data.push(('0' + hours).substr(-2))
-          console.log(cleanedJSON.meta)
           tsv += data.join('\t')
           tsv += '\n'
         }
