@@ -6,6 +6,7 @@ const fs = require('fs')
 const parseRundownPDF = require('./parseRundownPDF.js')
 const cleanCombinedJSON = require('./cleanCombinedJSON.js')
 const parseScript = require('./parseScript.js')
+const deleteDecision = require('./deleteDecision.js')
 let argv = require('minimist')(process.argv.slice(2))
 let procedure = argv._[0]
 
@@ -22,6 +23,10 @@ switch (procedure) {
     .catch((error) => {
       throw new Error(`error on parsing ${pdfFilePath}`)
     })
+    break
+  case 'deleteDecision':
+    let absoluteFolderPath = path.resolve(process.cwd(), argv._[1]) 
+    deleteDecision(absoluteFolderPath)
     break
   case 'cleanCombinedJSON':
     let jsonFilePath = path.resolve(process.cwd(), argv._[1])
@@ -54,6 +59,7 @@ switch (procedure) {
 
     if (argv.f === 'excel') {
       let tsv = ''
+      let iterator = 1
       for (let key in cleanedJSON) {
         if (key !== 'meta') {
           let row = cleanedJSON[key]
@@ -61,7 +67,7 @@ switch (procedure) {
           let startTime = ('0' + row.startTime.getMinutes()).substr(-2) + ('0' + row.startTime.getSeconds()).substr(-2)
           let endTime = ('0' + row.endTime.getMinutes()).substr(-2) + ('0' + row.endTime.getSeconds()).substr(-2)
           let data = [
-            key,
+            iterator ++,
             startTime,
             endTime,
             title,
@@ -69,8 +75,15 @@ switch (procedure) {
             row.raw.join('\\n'),
             row.format
           ]
-          for (let i = 0; i < 16; i ++) {
+          for (let i = 0; i < 12 ; i ++) {
             data.push('')
+          }
+          let guests = row.uniqueGuests 
+          if (guests) {
+            guests.forEach((v, i, a) => {
+              a[i] = `${v[0]} / ${v[1]} `
+            })
+            data[4] = guests.join('\\n')
           }
           let datetime = new Date(cleanedJSON.meta.date)
           let year = datetime.getFullYear()
@@ -85,7 +98,7 @@ switch (procedure) {
           tsv += '\n'
         }
       }
-      return process.stdout.write(tsv)
+      return process.stdout.write(tsv)  
     }
     process.stdout.write(JSON.stringify(cleanedJSON, null, 2))
     break
@@ -110,8 +123,9 @@ switch (procedure) {
           json[key].editor = script.editor
           json[key].reporter = script.reporter
           json[key].keywords = script.keywords
-          json[key].content = script.content
           json[key].raw = script.raw
+          json[key].content = script.content
+          json[key].uniqueGuests = script.uniqueGuests
         }
       }
       process.stdout.write(JSON.stringify(json, null, 2))
